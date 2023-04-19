@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src="functionality-fp.js"></script>
+
+<title>TIK-TAK-TOE</title>
+</head>
+<body>
+
+    <div class="main">
+<h1>Tik-Tak-Toe</h1>
+<p id="text">PLAYER X</p>
+
+<table>
+    <tr>
+      <td class="tableContent" id="UL" onclick="playersMove('UL')"></td>
+      <td class="tableContent" id="UM" onclick="playersMove('UM')"></td>
+      <td class="tableContent" id="UR" onclick="playersMove('UR')"></td>
+    </tr>
+    <tr>
+      <td class="tableContent" id="ML" onclick="playersMove('ML')"></td>
+      <td class="tableContent" id="MM" onclick="playersMove('MM')"></td>
+      <td class="tableContent" id="MR" onclick="playersMove('MR')"></td>
+    </tr>
+    <tr>
+      <td class="tableContent" id="DL" onclick="playersMove('DL')"></td>
+      <td class="tableContent" id="DM" onclick="playersMove('DM')"></td>
+      <td class="tableContent" id="DR" onclick="playersMove('DR')"></td>
+    </tr>
+  </table>
+
+  <button onclick="buttonClick()">RESTART</button>
+</div>
+
+  </body>
+  </html>
