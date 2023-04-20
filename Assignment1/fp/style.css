@@ -9,14 +9,16 @@ table, th, td {
   td{
     width: 200px;
     height: 200px;
+    font-size: 120px;
   }
 
-td {
-    font-size: 120px;
+#main{
+display: block;
+text-align: center;
 }
 
-.main{
-display: block;
+#bottom{
+  display: block;
 text-align: center;
 }
 

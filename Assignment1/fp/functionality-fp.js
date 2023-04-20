@@ -1,67 +1,169 @@
-function buttonClick(){
-    for(var i=0; i< document.getElementsByClassName("tableContent").length; i++){
-        document.getElementsByClassName("tableContent")[i].innerHTML = "";
+function reset(){
+    let game = {
+        Xplaces: [],
+        Oplaces: [],
+        currentPlayer: "X",
+        winner: false
     }
-    document.getElementById("text").innerHTML = "PLAYER X"
+
+    putGameInDom(game);
+    return game;
+}
+
+function putGameInDom(game){
+    document.getElementById("main").replaceChildren(renderGame(game));
+    if(document.getElementById("button") == null){
+     document.getElementById("bottom").appendChild(renderResetButton());
+    }
+}
+
+function renderGame(game){
+    let boxId = 0;
+    let table = document.createElement("table");
+    table.className = "gameTable";
+    table.id = "gameTable";
+    for(let i = 0; i<3; i++){
+        let row = table.appendChild(document.createElement("tr"))
+            for(let j = 0; j<3; j++){
+                let box = row.appendChild(renderBox(game, boxId));
+                boxId++;
+            }
+            table.appendChild(row);
+    }
+
+    return table;
+
+}
+
+function renderBox(game, boxId){
+    let box = document.createElement("td");
+    box.id = boxId;
+    const boxText = document.createTextNode(findSquareContent(game, boxId));
+    box.appendChild(boxText);
+    let click = () => this.move(game, boxId);
+    box.addEventListener("click", click, true);
+    return box;
+}
+
+// This is a function to find what text/content should be inside
+// of a square in the game, given the game and the index of the square.
+// It checks whether the index of the square is in one of the
+// arrays of places of either player (O places or X places).
+// If it is in none, it returns an empty string.
+function findSquareContent(game, boxId) {
+    if (game.Oplaces.includes(boxId)) {
+        return "O";
+    }
+    else if (game.Xplaces.includes(boxId)) {
+        return "X";
+    }
+    else {
+        return "";
+    }
+}
+
+function move(game, boxId){
+
+    if(game.winner){
+        return;
+    }
+
+    if(document.getElementById(boxId).innerText != ""){
+        return;
+    }
+
+    let newGame = game;
+
+    if(newGame.currentPlayer == "X"){
+        //document.getElementById(boxId).innerHTML = "X";
+        newGame.Xplaces.push(boxId);
+        console.log("Xplaces: " + newGame.Xplaces);
+    }
+    else if(newGame.currentPlayer == "O"){
+        //document.getElementById(boxId).innerHTML = "Y";
+        newGame.Oplaces.push(boxId);
+        console.log("Oplaces: " + newGame.Oplaces);
+    }
+    
+    let final = checkCombination(newGame);
+
+    putGameInDom(final);
+
+    if(final.winner){
+        blockGame(final);
+    }
+    return newGame;
+}
+
+function checkCombination(game){
+    let winningCombination = [
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        [0,3,6],
+        [1,4,7],
+        [2,5,8],
+        [0,4,8],
+        [2,4,6]
+    ];
+    
+    if (game.currentPlayer == "X"){
+        for(let combination of winningCombination){
+            //checks if in array of Xplaces you can find
+            //any of the winning combinations
+            if(combination.every((val) => game.Xplaces.includes(val))){
+                let winningGame = {
+                    Xplaces: game.Xplaces,
+                    Oplaces: game.Oplaces,
+                    currentPlayer: "X",
+                    winner: true
+                }
+                console.log("X is a winner")
+                
+                return winningGame;
+            }
+        }
+
+        return changeOfCurrentPlayer = {
+            Xplaces: game.Xplaces,
+            Oplaces: game.Oplaces,
+            currentPlayer: "O",
+            winner: false
+        };
+    }else if (game.currentPlayer == "O"){
+        for(let combination of winningCombination){
+            //checks if in array of Xplaces you can find
+            //any of the winning combinations
+            if(combination.every((val) => game.Oplaces.includes(val))){
+                let winningGame = {
+                    Xplaces: game.Xplaces,
+                    Oplaces: game.Oplaces,
+                    currentPlayer: "O",
+                    winner: true
+                }
+                console.log("O is a winner")
+                return winningGame;
+            }
+
+        }
+
+        return changeOfCurrentPlayer = {
+            Xplaces: game.Xplaces,
+            Oplaces: game.Oplaces,
+            currentPlayer: "X",
+            winner: false
+        };
+    }
 } 
 
-function playersMove(placement){
-    if(document.getElementById("text").innerHTML === "PLAYER X" && document.getElementById(placement).innerHTML === ""){
-        document.getElementById(placement).innerHTML = "X";
-        document.getElementById("text").innerHTML = "PLAYER O";
-        player = "o"
-    }
-    else if (document.getElementById("text").innerHTML === "PLAYER O" && document.getElementById(placement).innerHTML === ""){
-        document.getElementById(placement).innerHTML = "O";
-        document.getElementById("text").innerHTML = "PLAYER X";
-    }
-
-    checkStrike();
+function renderResetButton(){
+    let button = document.createElement("button");
+    button.id = "button";
+    button.innerText = "RESET";
+    let click = () => reset();
+    button.addEventListener("click", click);
+    return button;
 }
 
-function checkStrike(){
-    if(document.getElementById("ML").innerHTML === "X" && document.getElementById("MM").innerHTML === "X" && document.getElementById("MR").innerHTML === "X"
-    ||
-    document.getElementById("UL").innerHTML === "X" &&document.getElementById("UM").innerHTML === "X" &&document.getElementById("UR").innerHTML === "X" 
-    ||
-    document.getElementById("DL").innerHTML === "X" &&document.getElementById("DM").innerHTML === "X" &&document.getElementById("DR").innerHTML === "X" 
-    ||
-    document.getElementById("UL").innerHTML === "X" &&document.getElementById("MM").innerHTML === "X" &&document.getElementById("DR").innerHTML === "X" 
-    ||
-    document.getElementById("UR").innerHTML === "X" &&document.getElementById("MM").innerHTML === "X" &&document.getElementById("DL").innerHTML === "X" 
-    ||
-    document.getElementById("MM").innerHTML === "X" &&document.getElementById("UM").innerHTML === "X" &&document.getElementById("DM").innerHTML === "X" 
-    ||
-    document.getElementById("ML").innerHTML === "X" &&document.getElementById("UL").innerHTML === "X" &&document.getElementById("DL").innerHTML === "X" 
-    ||
-    document.getElementById("MR").innerHTML === "X" &&document.getElementById("UR").innerHTML === "X" &&document.getElementById("DR").innerHTML === "X" ){
-        document.getElementById("text").innerHTML = "PLAYER X WINS";
-    }
 
-    else if(document.getElementById("ML").innerHTML === "O" && document.getElementById("MM").innerHTML === "O" && document.getElementById("MR").innerHTML === "O"
-    ||
-    document.getElementById("UL").innerHTML === "O" &&document.getElementById("UM").innerHTML === "O" &&document.getElementById("UR").innerHTML === "O" 
-    ||
-    document.getElementById("DL").innerHTML === "O" &&document.getElementById("DM").innerHTML === "O" &&document.getElementById("DR").innerHTML === "O" 
-    ||
-    document.getElementById("UL").innerHTML === "O" &&document.getElementById("MM").innerHTML === "O" &&document.getElementById("DR").innerHTML === "O" 
-    ||
-    document.getElementById("UR").innerHTML === "O" &&document.getElementById("MM").innerHTML === "O" &&document.getElementById("DL").innerHTML === "O" 
-    ||
-    document.getElementById("MM").innerHTML === "O" &&document.getElementById("UM").innerHTML === "O" &&document.getElementById("DM").innerHTML === "O" 
-    ||
-    document.getElementById("ML").innerHTML === "O" &&document.getElementById("UL").innerHTML === "O" &&document.getElementById("DL").innerHTML === "O" 
-    ||
-    document.getElementById("MR").innerHTML === "O" &&document.getElementById("UR").innerHTML === "O" &&document.getElementById("DR").innerHTML === "O" ){
-        
-        document.getElementById("text").innerHTML = "PLAYER O WINS";
-    }
-    else if(
-    document.getElementById("ML").innerHTML !== "" && document.getElementById("MM").innerHTML !== "" && document.getElementById("MR").innerHTML !== ""
-    && document.getElementById("UR").innerHTML !== "" && document.getElementById("UM").innerHTML !== "" && document.getElementById("UR").innerHTML !== ""
-    && document.getElementById("DL").innerHTML !== "" && document.getElementById("DM").innerHTML !== "" && document.getElementById("DR").innerHTML !== ""
-    ){
-        document.getElementById("text").innerHTML = "IT'S A TIE. TRY AGAIN.";
-    }
-
-}
+let game = reset();
